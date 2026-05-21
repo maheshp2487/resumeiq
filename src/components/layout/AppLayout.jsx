@@ -3,11 +3,15 @@ import Sidebar from './Sidebar'
 
 export default function AppLayout() {
   return (
-    <div className="flex min-h-screen bg-[#0a0a0f] text-white">
-      <Sidebar />
+    <div className="min-h-screen bg-[#0a0a0f] flex flex-col md:flex-row overflow-hidden">
+      {/* Sidebar */}
+      <div className="md:block">
+        <Sidebar />
+      </div>
 
-      <main className="flex-1 overflow-y-auto">
-        <div className="w-full max-w-7xl mx-auto px-6 md:px-8 py-6">
+      {/* Main Content */}
+      <main className="flex-1 overflow-y-auto w-full">
+        <div className="p-4 md:p-6 lg:p-8">
           <Outlet />
         </div>
       </main>
