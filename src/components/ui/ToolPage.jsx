@@ -73,97 +73,116 @@ export default function ToolPage({ tool }) {
   }
 
   const handleAnalyze = async () => {
-    setError('')
+  const resumeInput = getResumeInput()
 
-    const resumeInput = getResumeInput()
+  if (
+    !resumeInput ||
+    (typeof resumeInput === 'string' &&
+      !resumeInput.trim())
+  ) {
+    toast({
+      message:
+        'Please upload or paste your resume.',
+      variant: 'error',
+    })
 
-    if (
-      !resumeInput ||
-      (typeof resumeInput === 'string' &&
-        !resumeInput.trim())
-    ) {
-      setError('Please upload a valid resume')
+    return
+  }
 
-      return
-    }
+  const jdInput = tool.needsJD
+    ? getJdInput()
+    : null
 
-    const jdInput = tool.needsJD
-      ? getJdInput()
-      : null
+  if (
+    tool.needsJD &&
+    (!jdInput ||
+      (typeof jdInput === 'string' &&
+        !jdInput.trim()))
+  ) {
+    toast({
+      message:
+        'Please add a proper job description.',
+      variant: 'error',
+    })
 
-    if (
-      tool.needsJD &&
-      (!jdInput ||
-        (typeof jdInput === 'string' &&
-          !jdInput.trim()))
-    ) {
-      setError('Job description too short')
+    return
+  }
 
-      return
-    }
+  setError('')
 
-    setState('loading')
+  setState('loading')
 
-    try {
-      const resumeContent = await resolveText({
+  try {
+    const resumeContent =
+      await resolveText({
         mode: resumeMode,
         file: resumeFile,
         text: resumeText,
-        emptyMessage: 'Please upload a valid resume',
+        emptyMessage:
+          'Please upload a valid resume.',
       })
 
-      const jdContent = tool.needsJD
-        ? await resolveText({
-            mode: jdMode,
-            file: jdFile,
-            text: jdText,
-            emptyMessage: 'Job description too short',
-          })
-        : ''
+    const jdContent = tool.needsJD
+      ? await resolveText({
+          mode: jdMode,
+          file: jdFile,
+          text: jdText,
+          emptyMessage:
+            'Please upload a valid job description.',
+        })
+      : ''
 
-      const validation = validateAnalysisInputs({
+    const validation =
+      validateAnalysisInputs({
         resumeText: resumeContent,
         jdText: jdContent,
         needsJD: tool.needsJD,
       })
 
-      if (!validation.ok) {
-        setState('idle')
-        setError(validation.message)
-
-        return
-      }
-
-      const data = await analyzeResume({
-        toolId: tool.id,
-        toolName: tool.name,
-        resumeContent,
-        jdContent,
-      })
-
-      setResults(data)
-
-      recordAnalysis(data.atsScore)
-
-      setState('results')
-
-      toast({
-        message: 'Analysis completed successfully.',
-        variant: 'success',
-      })
-    } catch (err) {
-      console.error(err)
-
-      setResults(null)
-
+    if (!validation.ok) {
       setState('idle')
 
-      setError(
-        err?.message ||
-          'Analysis failed. Please try again.'
-      )
+      toast({
+        message: validation.message,
+        variant: 'error',
+      })
+
+      return
     }
+
+    const data = await analyzeResume({
+      toolId: tool.id,
+      toolName: tool.name,
+      resumeContent,
+      jdContent,
+    })
+
+    setResults(data)
+
+    recordAnalysis(data.atsScore)
+
+    setState('results')
+
+    toast({
+      message:
+        'Analysis completed successfully.',
+      variant: 'success',
+    })
+  } catch (err) {
+    console.error(err)
+
+    setResults(null)
+
+    setState('idle')
+
+    toast({
+      message:
+        err?.message ||
+        'Analysis failed. Please try again.',
+      variant: 'error',
+    })
   }
+}
 
   const handleReset = () => {
     setState('idle')
@@ -301,12 +320,6 @@ export default function ToolPage({ tool }) {
             >
               ◎ Run AI Analysis
             </Button>
-
-            {error && (
-              <div className="flex-1 rounded-2xl border border-red-500/20 bg-red-500/5 px-4 py-3 text-sm text-red-300 leading-relaxed">
-                {error}
-              </div>
-            )}
           </div>
         </div>
       )}

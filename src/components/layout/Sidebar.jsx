@@ -15,42 +15,16 @@ export default function Sidebar() {
 
   return (
     <>
-      {/* Mobile Topbar */}
-      <div className="md:hidden sticky top-0 z-50 bg-[#101017]/95 backdrop-blur-xl border-b border-white/5 px-4 py-3 flex items-center justify-between">
-        <div className="flex items-center gap-3">
-          <div className="w-9 h-9 rounded-xl bg-gradient-to-br from-indigo-500 to-violet-600 flex items-center justify-center text-white font-bold">
-            IQ
-          </div>
-
-          <div>
-            <h1 className="text-white text-sm font-semibold">
-              ResumeIQ
-            </h1>
-
-            <p className="text-[#7d7d94] text-[0.65rem]">
-              AI Resume Platform
-            </p>
-          </div>
-        </div>
-
-        <button
-          onClick={handleLogout}
-          className="text-[#8c8ca3] text-lg"
-        >
-          ⏻
-        </button>
-      </div>
-
       {/* Desktop Sidebar */}
       <aside className="hidden md:flex w-[270px] min-w-[270px] bg-[#101017]/95 border-r border-white/5 backdrop-blur-xl flex-col py-6 px-3 shadow-2xl">
         {/* Branding */}
         <div className="flex items-center gap-3 px-3 mb-8">
-          <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-indigo-500 to-violet-600 flex items-center justify-center text-white font-bold shadow-lg shadow-indigo-500/20">
+          <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-indigo-500 to-violet-600 flex items-center justify-center text-white font-bold">
             IQ
           </div>
 
           <div>
-            <h1 className="text-white font-semibold text-[1rem] tracking-tight">
+            <h1 className="text-white font-semibold text-[1rem]">
               ResumeIQ
             </h1>
 
@@ -60,12 +34,8 @@ export default function Sidebar() {
           </div>
         </div>
 
-        {/* Workspace */}
+        {/* Dashboard */}
         <div className="mb-5">
-          <p className="px-3 mb-2 text-[0.66rem] font-semibold text-[#5f5f75] uppercase tracking-[0.18em]">
-            Workspace
-          </p>
-
           <NavItem
             path="/dashboard"
             icon="◈"
@@ -73,30 +43,20 @@ export default function Sidebar() {
           />
         </div>
 
-        {/* AI Tools */}
-        <div className="mb-5">
-          <p className="px-3 mb-2 text-[0.66rem] font-semibold text-[#5f5f75] uppercase tracking-[0.18em]">
-            AI Tools
-          </p>
-
-          <div className="space-y-1">
-            {TOOLS.map(tool => (
-              <NavItem
-                key={tool.id}
-                path={tool.path}
-                icon={tool.icon}
-                label={tool.shortName}
-              />
-            ))}
-          </div>
+        {/* Tools */}
+        <div className="space-y-1">
+          {TOOLS.map(tool => (
+            <NavItem
+              key={tool.id}
+              path={tool.path}
+              icon={tool.icon}
+              label={tool.shortName}
+            />
+          ))}
         </div>
 
         {/* About */}
-        <div className="mb-4">
-          <p className="px-3 mb-2 text-[0.66rem] font-semibold text-[#5f5f75] uppercase tracking-[0.18em]">
-            More
-          </p>
-
+        <div className="mt-5">
           <NavItem
             path="/about"
             icon="ℹ"
@@ -106,8 +66,8 @@ export default function Sidebar() {
 
         {/* User */}
         <div className="mt-auto px-2">
-          <div className="bg-[#171720] border border-white/5 rounded-[1.7rem] px-3 py-3 flex items-center gap-3 shadow-lg">
-            <div className="w-10 h-10 rounded-full bg-gradient-to-br from-indigo-500 to-violet-600 flex items-center justify-center text-white text-sm font-semibold flex-shrink-0">
+          <div className="bg-[#171720] border border-white/5 rounded-[1.7rem] px-3 py-3 flex items-center gap-3">
+            <div className="w-10 h-10 rounded-full bg-gradient-to-br from-indigo-500 to-violet-600 flex items-center justify-center text-white text-sm font-semibold">
               {user ? getInitials(user.name) : 'U'}
             </div>
 
@@ -123,14 +83,50 @@ export default function Sidebar() {
 
             <button
               onClick={handleLogout}
-              title="Sign out"
-              className="w-8 h-8 rounded-lg flex items-center justify-center text-[#7d7d94] hover:bg-red-500/10 hover:text-red-400 transition-all duration-200"
+              className="text-[#7d7d94] hover:text-red-400"
             >
               ⏻
             </button>
           </div>
         </div>
       </aside>
+
+      {/* Mobile Bottom Navigation */}
+      <div className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-[#101017]/95 border-t border-white/5 backdrop-blur-xl">
+        <div className="flex items-center justify-around px-2 py-2">
+          <MobileItem
+            path="/dashboard"
+            icon="◈"
+            label="Home"
+          />
+
+          <MobileItem
+            path="/ats-checker"
+            icon="◉"
+            label="ATS"
+          />
+
+          <MobileItem
+            path="/resume-analyzer"
+            icon="◎"
+            label="AI"
+          />
+
+          <MobileItem
+            path="/about"
+            icon="ℹ"
+            label="About"
+          />
+
+          <button
+            onClick={handleLogout}
+            className="flex flex-col items-center justify-center text-[#8c8ca3] text-xs"
+          >
+            <span className="text-lg">⏻</span>
+            Logout
+          </button>
+        </div>
+      </div>
     </>
   )
 }
@@ -142,18 +138,37 @@ function NavItem({ path, icon, label }) {
       className={({ isActive }) =>
         `group flex items-center gap-3 px-3 py-3 mx-1 rounded-xl text-[0.88rem] transition-all duration-200 ${
           isActive
-            ? 'bg-gradient-to-r from-indigo-500/15 to-violet-500/10 text-indigo-300 border border-indigo-500/10 shadow-lg shadow-indigo-500/5'
+            ? 'bg-gradient-to-r from-indigo-500/15 to-violet-500/10 text-indigo-300 border border-indigo-500/10'
             : 'text-[#9b9bb0] hover:bg-white/5 hover:text-white'
         }`
       }
     >
-      <span className="w-5 text-center text-[0.95rem] opacity-90">
+      <span className="w-5 text-center">
         {icon}
       </span>
 
-      <span className="font-medium tracking-tight">
-        {label}
+      <span>{label}</span>
+    </NavLink>
+  )
+}
+
+function MobileItem({ path, icon, label }) {
+  return (
+    <NavLink
+      to={path}
+      className={({ isActive }) =>
+        `flex flex-col items-center justify-center text-xs transition-all ${
+          isActive
+            ? 'text-indigo-300'
+            : 'text-[#8c8ca3]'
+        }`
+      }
+    >
+      <span className="text-lg">
+        {icon}
       </span>
+
+      {label}
     </NavLink>
   )
 }
